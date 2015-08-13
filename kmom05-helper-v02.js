@@ -25,54 +25,139 @@ Kmom05.keydown = function(k) {
     document.dispatchEvent(oEvent);
 };
 var arr = [
-    {"todo": "Toggle Circle", "key": 69, "letter": "E", "info": "Testar"},
-    {"todo": "Toggle Circle again", "key": 69, "info": null},
-    {"todo": "Increase Size", "key": 81, "info": null},
-    {"todo": "Increase Size some more", "key": 81, "info": null},
-    {"todo": "Decrease Size", "key": 87, "info": null},
-    {"todo": "Decrease again", "key": 87, "info": null},
-    {"todo": "Decrease some more", "key": 87, "info": null},
-    {"todo": "Increase to default", "key": 81, "info": null},
-    {"todo": "Toggle color 1", "key": 82, "info": null},
-    {"todo": "Toggle color 2", "key": 82, "info": null},
-    {"todo": "Toggle color 3", "key": 82, "info": null},
-    {"todo": "Toggle color 4", "key": 82, "info": null},
-    {"todo": "Copy element", "key": 84, "info": "new one should be random!"},
-    {"todo": "Select all for another copy", "key": 73, "info": null},
-    {"todo": "Copy several elements", "key": 84, "info": "new ones should be random!"},
-    {"todo": "Setting up...", "key": 85, "info": null, "special": "getSelected"},
-    {"todo": "Decreasing Z-index", "key": 65, "info": null},
-    {"todo": "Checking Z-index", "key": -1, "info": null, "special": "zindex"},
-    {"todo": "Increasing Z-index", "key": 83, "info": null},
-    {"todo": "Increasing Z-index again", "key": 83, "info": null},
-    {"todo": "Checking Z-index", "key": -2, "info": null, "special": "zindex"}
+    {"todo": "Toggle Circle", "key": 69, "letter": "E"},
+    {"todo": "Toggle Circle back", "key": 69, "letter": "E"},
+    {"todo": "Increase size", "key": 81, "letter": "Q"},
+    {"todo": "Decrease size", "key": 87, "letter": "W"},
+    {"todo": "Toggle color", "key": 82, "letter": "R"},
+    {"todo": "Increased Z-index", "key": 84, "letter": "T"}
 ];
-function setOk (c) {
-    console.log('%c Letter: ' + c + " OK!", 'background: #00ff00; color: #000');
+function setOk (c, info) {
+    console.log('%c Letter: ' + c + ', ' + info + ' OK!', 'background: #00ff00; color: #000');
 };
 
-function setFail (c) {
-    console.log('%c Letter: ' + c + " FAIL!", 'background: #ff0000; color: #000');
+function setFail (c, info) {
+    console.log('%c Letter: ' + c + ', ' + info + ' FAIL!', 'background: #ff0000; color: #000');
 };
 
-var i = 0, interval = 500, saveForLater = "";
+function getAllSelectedAndReturnOne() {
+    var selAll = document.getElementsByClassName("selected");
+    var one = "";
+    for (var j = 0; j < selAll.length; j++) {
+        one = selAll[j];
+    }
+    return one;
+};
+
+function getAllSelected () {
+    var selAll = document.getElementsByClassName("selected");
+    var ret = [];
+    for (var j = 0; j < selAll.length; j++) {
+        ret[j] = selAll[j];
+    }
+    return ret;
+};
+
+function getStyle(el,styleProp)
+{
+    if (el.currentStyle)
+        return el.currentStyle[styleProp];
+
+    return document.defaultView.getComputedStyle(el,null)[styleProp];
+};
+
+var i = 0, interval = 500, round = 1;
+
+function testE (el) {
+    if (round === 1) {
+        if (el.classList.contains("circle")) {
+            setOk("E", "circle");
+            round++;
+        } else {
+            setFail("E", "circle");
+        }
+    } else if (round === 2) {
+        if (!el.classList.contains("circle")) {
+            setOk("E", "back to normal");
+        } else {
+            setFail("E", "back to normal");
+        }
+    }
+
+};
+
+function testQ (el) {
+    var holderBefore, holderAfter;
+    holderBefore = parseInt(el.offsetHeight);
+    Kmom05.keydown(81);
+    holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
+
+    if (holderAfter > holderBefore) {
+        setOk("Q", "Increased size");
+    } else {
+        setFail("Q", "Increased size");
+    }
+};
+
+function testZ (el) {
+    var holderBefore, holderAfter;
+    holderBefore = parseInt(el.offsetHeight);
+    Kmom05.keydown(87);
+    holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
+
+    if (holderAfter < holderBefore) {
+        setOk("Z", "Decreased size");
+    } else {
+        setFail("Z", "Decreased size");
+    }
+};
+
+function testR (el) {
+    var startColor = getStyle(el, "backgroundColor");
+    for (var j = 0; j < 3; j++) {
+        Kmom05.keydown(82);
+        var temp = getAllSelectedAndReturnOne();
+        if (getStyle(temp, "backgroundColor") != startColor) {
+            setOk("R", "Toggle color");
+        } else {
+            setFail("R", "Toggle color");
+        }
+    }
+};
+
+function testT (el) {
+    Kmom05.keydown(84);
+    Kmom05.keydown(84);
+    var temp = getAllSelected();
+    if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[1], "zIndex")) {
+        setOk("T", "Increased Z-index");
+    } else {
+        setFail("T", "Increased Z-index");
+    }
+};
 
 var timer = window.setInterval(function(){
     if(i < arr.length){
-        Kmom05.keydown(arr[i].key);
-        if (arr[i].letter === "E") {
-            var selAll = document.getElementsByClassName("selected");
-            var one = "";
-            for (var j = 0; j < selAll.length; j++) {
-                one = selAll[j];
-            }
-            if (parseInt(one.style.borderRaduis)) {
-                setOk(arr[i].letter);
-            } else {
-                setFail(arr[i].letter);
-            }
-        }
 
+        if (arr[i].letter === "E") {
+            Kmom05.keydown(arr[i].key);
+            var element = getAllSelectedAndReturnOne();
+            testE(element);
+        } else if (arr[i].letter === "Q") {
+            Kmom05.keydown(arr[i].key);
+            var element = getAllSelectedAndReturnOne();
+            testQ(element);
+        } else if (arr[i].letter === "W") {
+            Kmom05.keydown(arr[i].key);
+            var element = getAllSelectedAndReturnOne();
+            testZ(element);
+        } else if (arr[i].letter === "R") {
+            var element = getAllSelectedAndReturnOne();
+            testR(element);
+        } else if (arr[i].letter === "T") {
+            var element = getAllSelectedAndReturnOne();
+            testT(element);
+        }
         i++;
     } else {
         console.log("DONE!");
