@@ -1,4 +1,5 @@
 javascript:(function(){
+var i = 0, interval = 500, round = 1, corr = 0, faults = 0;
 Kmom05 = {};
 Kmom05.keydown = function(k) {
     var oEvent = document.createEvent('KeyboardEvent');
@@ -24,20 +25,36 @@ Kmom05.keydown = function(k) {
     };
     document.dispatchEvent(oEvent);
 };
+
 var arr = [
     {"todo": "Toggle Circle", "key": 69, "letter": "E"},
     {"todo": "Toggle Circle back", "key": 69, "letter": "E"},
     {"todo": "Increase size", "key": 81, "letter": "Q"},
     {"todo": "Decrease size", "key": 87, "letter": "W"},
     {"todo": "Toggle color", "key": 82, "letter": "R"},
-    {"todo": "Increased Z-index", "key": 84, "letter": "T"}
+    {"todo": "New copy and increased Z-index", "key": 84, "letter": "T"},
+    {"todo": "Decreased Z-index", "key": 65, "letter": "A"},
+    {"todo": "Increased Z-index", "key": 83, "letter": "S"},
+    {"todo": "Delete selected", "key": 89, "letter": "Y"},
+    {"todo": "Select all", "key": 73, "letter": "i"},
+    {"todo": "Move left", "key": 37, "letter": "left"},
+    {"todo": "Move up", "key": 38, "letter": "up"},
+    {"todo": "Move right", "key": 39, "letter": "right"},
+    {"todo": "Move down", "key": 40, "letter": "down"},
+    {"todo": "Deselect all", "key": 85, "letter": "U"},
+    {"todo": "New random element", "key": 80, "letter": "P"},
+    {"todo": "Double click", "key": -1, "letter": "Double-click"},
+    {"todo": "5 second change", "key": 68, "letter": "D"}
 ];
+
 function setOk (c, info) {
     console.log('%c Letter: ' + c + ', ' + info + ' OK!', 'background: #00ff00; color: #000');
+    corr++;
 };
 
 function setFail (c, info) {
     console.log('%c Letter: ' + c + ', ' + info + ' FAIL!', 'background: #ff0000; color: #000');
+    faults++;
 };
 
 function getAllSelectedAndReturnOne() {
@@ -49,6 +66,15 @@ function getAllSelectedAndReturnOne() {
     return one;
 };
 
+function unselectAllButOne() {
+    var selAll = document.getElementsByClassName("selected");
+    for (var j = 0; j < selAll.length; j++) {
+        if (j > 0) {
+            selAll[j].classList.remove("selected");
+        }
+    }
+}
+
 function getAllSelected () {
     var selAll = document.getElementsByClassName("selected");
     var ret = [];
@@ -58,6 +84,15 @@ function getAllSelected () {
     return ret;
 };
 
+function getAllDivs () {
+    var selAll = document.getElementsByTagName("div");
+    var ret = [];
+    for (var j = 0; j < selAll.length; j++) {
+        ret[j] = selAll[j];
+    }
+    return ret;
+}
+
 function getStyle(el,styleProp)
 {
     if (el.currentStyle)
@@ -65,8 +100,6 @@ function getStyle(el,styleProp)
 
     return document.defaultView.getComputedStyle(el,null)[styleProp];
 };
-
-var i = 0, interval = 500, round = 1;
 
 function testE (el) {
     if (round === 1) {
@@ -130,15 +163,144 @@ function testT (el) {
     Kmom05.keydown(84);
     var temp = getAllSelected();
     if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[1], "zIndex")) {
-        setOk("T", "Increased Z-index");
+        setOk("T", "New copy with increased Z-index");
     } else {
-        setFail("T", "Increased Z-index");
+        setFail("T", "New copy with increased Z-index");
     }
+};
+
+function testA (el) {
+    var holderBefore = getStyle(el, "zIndex");
+    Kmom05.keydown(65);
+    var allEl = getAllSelected();
+    var holderAfter = getStyle(allEl[2], "zIndex");
+    var ok = true;
+    if (holderAfter >= holderBefore) {
+        ok = false;
+    }
+    if (ok) {
+        setOk("A", "Decreased Z-index");
+    } else {
+        setFail("A", "Decreased Z-index");
+    }
+};
+
+function testS (el) {
+    var holderBefore = getStyle(el, "zIndex");
+    Kmom05.keydown(83);
+    var allEl = getAllSelected();
+    var holderAfter = getStyle(allEl[2], "zIndex");
+    var ok = true;
+    if (holderAfter <= holderBefore) {
+        ok = false;
+    }
+    if (ok) {
+        setOk("S", "Increased Z-index");
+    } else {
+        setFail("S", "Increased Z-index");
+    }
+};
+
+function testY (el) {
+    if (el.length === 0) {
+        setOk("Y", "Deleted elements");
+    } else {
+        setFail("Y", "Deleted elements");
+    }
+};
+
+function testI (el) {
+    var ok = true;
+    for (var j = 0; j < el.length; j++) {
+        if (!el[j].classList.contains("selected")) {
+            ok = false;
+        }
+    }
+    if (ok) {
+        setOk("i", "Select all");
+    } else {
+        setFail("i", "Select all");
+    }
+};
+
+function testArrows (el, letter, key) {
+    var before = getAllSelectedAndReturnOne().getBoundingClientRect();
+    Kmom05.keydown(key);
+    var after = getAllSelectedAndReturnOne().getBoundingClientRect();
+    var ok = false;
+
+    if (letter === "left") {
+        if (after.left < before.left) {
+            setOk("Left arrow", "Move left");
+        } else {
+            setFail("Left arrow", "Move left");
+        }
+    } else if (letter === "up") {
+        if (after.top < before.top) {
+            setOk("Up arrow", "Move up");
+        } else {
+            setFail("Up arrow", "Move up");
+        }
+    } else if (letter === "right") {
+        if (after.left > before.left) {
+            setOk("Right arrow", "Move right");
+        } else {
+            setFail("Right arrow", "Move right");
+        }
+    } else if (letter === "down") {
+        if (after.top > before.top) {
+            setOk("Down arrow", "Move down");
+        } else {
+            setFail("Down arrow", "Move down");
+        }
+    }
+};
+
+function testU (el) {
+    var ok = true;
+    for (var j = 0; j < el.length; j++) {
+        if (el[j].classList.contains("selected")) {
+            ok = false;
+        }
+    }
+    if (ok) {
+        setOk("U", "Deselect all");
+    } else {
+        setFail("U", "Deselect all");
+    }
+};
+
+function testP (el) {
+    Kmom05.keydown(80);
+    var after = getAllDivs();
+    if (after.length > el.length) {
+        setOk("P", "New random");
+    } else {
+        setFail("P", "New random");
+    }
+};
+
+function testDoubleClick () {
+    var el = getAllDivs();
+    var one = el[0];
+    one.classList.add("selected");
+    var event = new MouseEvent('dblclick', {
+        'view': window,
+        'bubbles': true,
+        'cancelable': true
+      });
+    one.dispatchEvent(event);
+    window.setTimeout(function(){
+        if (getAllDivs().length < el.length) {
+            setOk("Double-click", "mouse event");
+        } else {
+            setFail("Double-click", "mouse event");
+        }
+    }, 2500);
 };
 
 var timer = window.setInterval(function(){
     if(i < arr.length){
-
         if (arr[i].letter === "E") {
             Kmom05.keydown(arr[i].key);
             var element = getAllSelectedAndReturnOne();
@@ -157,60 +319,42 @@ var timer = window.setInterval(function(){
         } else if (arr[i].letter === "T") {
             var element = getAllSelectedAndReturnOne();
             testT(element);
+        } else if (arr[i].letter === "A") {
+            var element = getAllSelectedAndReturnOne();
+            testA(element);
+        } else if (arr[i].letter === "S") {
+            var element = getAllSelectedAndReturnOne();
+            testS(element);
+        } else if (arr[i].letter === "Y") {
+            unselectAllButOne();
+            Kmom05.keydown(arr[i].key);
+            var elements = getAllSelected();
+            testY(elements);
+        } else if (arr[i].letter === "i") {
+            Kmom05.keydown(arr[i].key);
+            var elements = getAllSelected();
+            testI(elements);
+        } else if (arr[i].letter === "left" || arr[i].letter === "up" || arr[i].letter === "right" || arr[i].letter === "down") {
+            testArrows(elements, arr[i].letter, arr[i].key);
+        } else if (arr[i].letter === "U") {
+            Kmom05.keydown(arr[i].key);
+            var elements = getAllSelected();
+            testU(elements);
+        } else if (arr[i].letter === "P") {
+            var elements = getAllDivs();
+            testP(elements);
+        } else if (arr[i].letter === "Double-click") {
+            testDoubleClick();
+        } else if (arr[i].letter === "D") {
+            Kmom05.keydown(73);
+            console.log('%c Check for a 5 second change on the elements by pressing D!!', 'background: #ffa500; color: #000');
         }
         i++;
     } else {
-        console.log("DONE!");
-        window.clearInterval(timer);
+        window.setTimeout(function(){
+            console.log("DONE! Correct: " + corr + ", Errors: " + faults);
+            window.clearInterval(timer);
+        }, 2500);
     }
 }, interval);
 })();
-
-/*
-
-console.log('%c Testing: ' + arr[i].todo + ", key:" + arr[i].key + ", letter: " + arr[i].letter, 'background: #222; color: #bada55');
-if (arr[i].info != null) {
-    console.log('%c Look for: ' + arr[i].info, 'background: #ffa500; color: #000');
-}
-
-
-hex:
-red = ff0000
-green = 00ff00
-orange = ffa500
-
-case 69:
-    toggleCircle();
-case 81:
-    increaseSize();
-case 87:
-    decreaseSize();
-case 82:
-    toggleColor();
-case 84:
-    createRandom();
-case 65:
-    increaseZindex();
-case 83:
-    decreaseZindex();
-case 89:
-    deleteSelected();
-case 37:
-    move("left");
-case 38:
-    move("up");
-case 39:
-    move("right");
-case 40:
-    move("down");
-case 85:
-    unselect();
-case 73:
-    selectAll();
-case 80:
-    createNewRandom();
-case 68:
-    speedChange();
-case 32:
-    spinThisShit();
-*/
