@@ -88,6 +88,9 @@ function getAllDivs () {
     var selAll = document.getElementsByTagName("div");
     var ret = [];
     for (var j = 0; j < selAll.length; j++) {
+        if (selAll[j].classList.contains("box")) {
+
+        }
         ret[j] = selAll[j];
     }
     return ret;
@@ -282,7 +285,7 @@ function testP (el) {
 
 function testDoubleClick () {
     var el = getAllDivs();
-    var one = el[0];
+    var one = el[1];
     one.classList.add("selected");
     var event = new MouseEvent('dblclick', {
         'view': window,
