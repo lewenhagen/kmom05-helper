@@ -162,7 +162,7 @@ function testT (el) {
     Kmom05.keydown(84);
     Kmom05.keydown(84);
     var temp = getAllSelected();
-    if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[1], "zIndex")) {
+    if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[0], "zIndex")) {
         setOk("T", "New copy with increased Z-index");
     } else {
         setFail("T", "New copy with increased Z-index");
@@ -282,7 +282,7 @@ function testP (el) {
 
 function testDoubleClick () {
     var el = getAllDivs();
-    var one = el[0];
+    var one = el[1];
     one.classList.add("selected");
     var event = new MouseEvent('dblclick', {
         'view': window,
