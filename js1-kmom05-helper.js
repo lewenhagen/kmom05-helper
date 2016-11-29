@@ -188,8 +188,11 @@ function testA (el) {
 function testS (el) {
     var holderBefore = getStyle(el, "zIndex");
     Kmom05.keydown(83);
+    Kmom05.keydown(83);
     var allEl = getAllSelected();
     var holderAfter = getStyle(allEl[2], "zIndex");
+    console.log("before: " + holderBefore);
+    console.log("after: " + holderAfter);
     var ok = true;
     if (holderAfter <= holderBefore) {
         ok = false;
@@ -347,13 +350,14 @@ var timer = window.setInterval(function(){
             testDoubleClick();
         } else if (arr[i].letter === "D") {
             Kmom05.keydown(73);
-            console.log('%c Check for a 5 second change on the elements by pressing D!!', 'background: #ffa500; color: #000');
+            Kmom05.keydown(68);
+            console.log('%c EXTRA! Check for a 5 second change on the elements by pressing D!!', 'background: #ffa500; color: #000');
         }
         i++;
     } else {
         window.setTimeout(function(){
-            console.log("DONE! Correct: " + corr + ", Errors: " + faults);
             window.clearInterval(timer);
+            console.log("DONE! Correct: " + corr + ", Errors: " + faults);
         }, 2500);
     }
 }, interval);
