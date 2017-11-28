@@ -43,8 +43,8 @@ var arr = [
     {"todo": "Move down", "key": 40, "letter": "down"},
     {"todo": "Deselect all", "key": 85, "letter": "U"},
     {"todo": "New random element", "key": 80, "letter": "P"},
-    {"todo": "Double click", "key": -1, "letter": "Double-click"},
-    {"todo": "5 second change", "key": 68, "letter": "D"}
+    {"todo": "5 second change", "key": 68, "letter": "D"},
+    {"todo": "Double click", "key": -1, "letter": "Double-click"}
 ];
 
 function setOk (c, info) {
@@ -58,12 +58,8 @@ function setFail (c, info) {
 };
 
 function getAllSelectedAndReturnOne() {
-    var selAll = document.getElementsByClassName("selected");
-    var one = "";
-    for (var j = 0; j < selAll.length; j++) {
-        one = selAll[j];
-    }
-    return one;
+    var selAll = document.getElementsByClassName("box")[0];
+    return selAll;
 };
 
 function unselectAllButOne() {
@@ -76,21 +72,11 @@ function unselectAllButOne() {
 }
 
 function getAllSelected () {
-    var selAll = document.getElementsByClassName("selected");
-    var ret = [];
-    for (var j = 0; j < selAll.length; j++) {
-        ret[j] = selAll[j];
-    }
-    return ret;
+    return document.getElementsByClassName("selected");
 };
 
 function getAllDivs () {
-    var selAll = document.getElementsByTagName("div");
-    var ret = [];
-    for (var j = 0; j < selAll.length; j++) {
-        ret[j] = selAll[j];
-    }
-    return ret;
+    return document.getElementsByTagName("div");
 }
 
 function getStyle(el,styleProp)
@@ -116,7 +102,6 @@ function testE (el) {
             setFail("E", "back to normal");
         }
     }
-
 };
 
 function testQ (el) {
@@ -170,13 +155,15 @@ function testT (el) {
 };
 
 function testA (el) {
-    var holderBefore = getStyle(el, "zIndex");
+    var holderBefore = parseInt(getStyle(el, "zIndex"));
     Kmom05.keydown(65);
-    var allEl = getAllSelected();
-    var holderAfter = getStyle(allEl[2], "zIndex");
-    var ok = true;
-    if (holderAfter >= holderBefore) {
-        ok = false;
+    Kmom05.keydown(65);
+    var holderAfter = parseInt(getStyle(el, "zIndex"));
+    console.log("before: " + holderBefore);
+    console.log("after: " + holderAfter);
+    var ok = false;
+    if (holderAfter < holderBefore) {
+        ok = true;
     }
     if (ok) {
         setOk("A", "Decreased Z-index");
@@ -186,16 +173,15 @@ function testA (el) {
 };
 
 function testS (el) {
-    var holderBefore = getStyle(el, "zIndex");
+    var holderBefore = parseInt(getStyle(el, "zIndex"));
     Kmom05.keydown(83);
     Kmom05.keydown(83);
-    var allEl = getAllSelected();
-    var holderAfter = getStyle(allEl[2], "zIndex");
+    var holderAfter = parseInt(getStyle(el, "zIndex"));
     console.log("before: " + holderBefore);
     console.log("after: " + holderAfter);
-    var ok = true;
-    if (holderAfter <= holderBefore) {
-        ok = false;
+    var ok = false;
+    if (holderAfter > holderBefore) {
+        ok = true;
     }
     if (ok) {
         setOk("S", "Increased Z-index");
@@ -284,17 +270,20 @@ function testP (el) {
 };
 
 function testDoubleClick () {
-    var el = getAllDivs();
-    var one = el[1];
-    one.classList.add("selected");
+    var el = document.querySelectorAll(".box");
+    console.log("BEFORE: " + el.length);
     var event = new MouseEvent('dblclick', {
         'view': window,
         'bubbles': true,
         'cancelable': true
       });
-    one.dispatchEvent(event);
+    el[0].dispatchEvent(event);
     window.setTimeout(function(){
-        if (getAllDivs().length < el.length) {
+        var newLength = document.querySelectorAll(".box").length;
+        console.log("AFTER: " + newLength);
+        console.log("HERE: ");
+        console.log(newLength < el.length);
+        if (newLength < el.length) {
             setOk("Double-click", "mouse event");
         } else {
             setFail("Double-click", "mouse event");
