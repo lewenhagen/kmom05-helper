@@ -76,7 +76,12 @@ function getAllSelected () {
 };
 
 function getAllDivs () {
-    return document.getElementsByTagName("div");
+    var selAll = document.getElementsByTagName("div");
+    var ret = [];
+    for (var j = 0; j < selAll.length; j++) {
+        ret.push(selAll[j]);
+    }
+    return ret;
 }
 
 function getStyle(el,styleProp)
@@ -102,6 +107,7 @@ function testE (el) {
             setFail("E", "back to normal");
         }
     }
+
 };
 
 function testQ (el) {
@@ -271,7 +277,6 @@ function testP (el) {
 
 function testDoubleClick () {
     var el = document.querySelectorAll(".box");
-    console.log("BEFORE: " + el.length);
     var event = new MouseEvent('dblclick', {
         'view': window,
         'bubbles': true,
@@ -280,9 +285,6 @@ function testDoubleClick () {
     el[0].dispatchEvent(event);
     window.setTimeout(function(){
         var newLength = document.querySelectorAll(".box").length;
-        console.log("AFTER: " + newLength);
-        console.log("HERE: ");
-        console.log(newLength < el.length);
         if (newLength < el.length) {
             setOk("Double-click", "mouse event");
         } else {
