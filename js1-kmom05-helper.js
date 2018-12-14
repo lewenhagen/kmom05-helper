@@ -1,49 +1,34 @@
 javascript:(function(){
-var i = 0, interval = 500, round = 1, corr = 0, faults = 0;
-Kmom05 = {};
-Kmom05.keydown = function(k) {
-    var oEvent = document.createEvent('KeyboardEvent');
+var i = 0, interval = 500, round = 1, corr = 0, faults = 0, allEls = document.getElementsByClassName("selected");
+var Kmom05 = {};
+Kmom05.keydown = async function(k) {
+    var myevent = new KeyboardEvent("keydown", {
+        'view': window,
+        'key': k
+    });
 
-    Object.defineProperty(oEvent, 'keyCode', {
-        get : function() {
-            return this.keyCodeVal;
-        }
-    });
-    Object.defineProperty(oEvent, 'which', {
-        get : function() {
-            return this.keyCodeVal;
-        }
-    });
-    if (oEvent.initKeyboardEvent) {
-        oEvent.initKeyboardEvent("keydown", true, true, document.defaultView, false, false, false, false, k, k);
-    } else {
-        oEvent.initKeyEvent("keydown", true, true, document.defaultView, false, false, false, false, k, 0);
-    };
-    oEvent.keyCodeVal = k;
-    if (oEvent.keyCode !== k) {
-        alert("keyCode mismatch " + oEvent.keyCode + "(" + oEvent.which + ")");
-    };
-    document.dispatchEvent(oEvent);
+    return Promise.resolve(document.dispatchEvent(myevent));
+
 };
 
 var arr = [
-    {"todo": "Toggle Circle", "key": 69, "letter": "E"},
-    {"todo": "Toggle Circle back", "key": 69, "letter": "E"},
-    {"todo": "Increase size", "key": 81, "letter": "Q"},
-    {"todo": "Decrease size", "key": 87, "letter": "W"},
-    {"todo": "Toggle color", "key": 82, "letter": "R"},
-    {"todo": "New copy and increased Z-index", "key": 84, "letter": "T"},
-    {"todo": "Decreased Z-index", "key": 65, "letter": "A"},
-    {"todo": "Increased Z-index", "key": 83, "letter": "S"},
-    {"todo": "Delete selected", "key": 89, "letter": "Y"},
-    {"todo": "Select all", "key": 73, "letter": "i"},
-    {"todo": "Move left", "key": 37, "letter": "left"},
-    {"todo": "Move up", "key": 38, "letter": "up"},
-    {"todo": "Move right", "key": 39, "letter": "right"},
-    {"todo": "Move down", "key": 40, "letter": "down"},
-    {"todo": "Deselect all", "key": 85, "letter": "U"},
-    {"todo": "New random element", "key": 80, "letter": "P"},
-    {"todo": "5 second change", "key": 68, "letter": "D"},
+    {"todo": "Toggle Circle", "key": "e", "letter": "E"},
+    {"todo": "Toggle Circle back", "key": "e", "letter": "E"},
+    {"todo": "Increase size", "key": "q", "letter": "Q"},
+    {"todo": "Decrease size", "key": "w", "letter": "W"},
+    {"todo": "Toggle color", "key": "r", "letter": "R"},
+    {"todo": "New copy and increased Z-index", "key": "t", "letter": "T"},
+    {"todo": "Decreased Z-index", "key": "a", "letter": "A"},
+    {"todo": "Increased Z-index", "key": "s", "letter": "S"},
+    {"todo": "Delete selected", "key": "y", "letter": "Y"},
+    {"todo": "Select all", "key": "i", "letter": "i"},
+    {"todo": "Move left", "key": "ArrowLeft", "letter": "left"},
+    {"todo": "Move up", "key": "ArrowUp", "letter": "up"},
+    {"todo": "Move right", "key": "ArrowRight", "letter": "right"},
+    {"todo": "Move down", "key": "ArrowDown", "letter": "down"},
+    {"todo": "Deselect all", "key": "u", "letter": "U"},
+    {"todo": "New random element", "key": "p", "letter": "P"},
+    {"todo": "5 second change", "key": "d", "letter": "D"},
     {"todo": "Double click", "key": -1, "letter": "Double-click"}
 ];
 
@@ -93,6 +78,7 @@ function getStyle(el,styleProp)
 };
 
 function testE (el) {
+
     if (round === 1) {
         if (el.classList.contains("circle")) {
             setOk("E", "circle");
@@ -113,7 +99,7 @@ function testE (el) {
 function testQ (el) {
     var holderBefore, holderAfter;
     holderBefore = parseInt(el.offsetHeight);
-    Kmom05.keydown(81);
+    Kmom05.keydown("q");
     holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
 
     if (holderAfter > holderBefore) {
@@ -126,20 +112,20 @@ function testQ (el) {
 function testZ (el) {
     var holderBefore, holderAfter;
     holderBefore = parseInt(el.offsetHeight);
-    Kmom05.keydown(87);
+    Kmom05.keydown("w");
     holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
 
     if (holderAfter < holderBefore) {
-        setOk("Z", "Decreased size");
+        setOk("W", "Decreased size");
     } else {
-        setFail("Z", "Decreased size");
+        setFail("W", "Decreased size");
     }
 };
 
 function testR (el) {
     var startColor = getStyle(el, "backgroundColor");
     for (var j = 0; j < 3; j++) {
-        Kmom05.keydown(82);
+        Kmom05.keydown("r");
         var temp = getAllSelectedAndReturnOne();
         if (getStyle(temp, "backgroundColor") != startColor) {
             setOk("R", "Toggle color");
@@ -150,8 +136,8 @@ function testR (el) {
 };
 
 function testT (el) {
-    Kmom05.keydown(84);
-    Kmom05.keydown(84);
+    Kmom05.keydown("t");
+    Kmom05.keydown("t");
     var temp = getAllSelected();
     if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[0], "zIndex")) {
         setOk("T", "New copy with increased Z-index");
@@ -162,8 +148,8 @@ function testT (el) {
 
 function testA (el) {
     var holderBefore = parseInt(getStyle(el, "zIndex"));
-    Kmom05.keydown(65);
-    Kmom05.keydown(65);
+    Kmom05.keydown("a");
+    Kmom05.keydown("a");
     var holderAfter = parseInt(getStyle(el, "zIndex"));
     console.log("before: " + holderBefore);
     console.log("after: " + holderAfter);
@@ -180,8 +166,8 @@ function testA (el) {
 
 function testS (el) {
     var holderBefore = parseInt(getStyle(el, "zIndex"));
-    Kmom05.keydown(83);
-    Kmom05.keydown(83);
+    Kmom05.keydown("s");
+    Kmom05.keydown("s");
     var holderAfter = parseInt(getStyle(el, "zIndex"));
     console.log("before: " + holderBefore);
     console.log("after: " + holderAfter);
@@ -266,7 +252,7 @@ function testU (el) {
 };
 
 function testP (el) {
-    Kmom05.keydown(80);
+    Kmom05.keydown("p");
     var after = getAllDivs();
     if (after.length > el.length) {
         setOk("P", "New random");
@@ -294,15 +280,24 @@ function testDoubleClick () {
 };
 
 var timer = window.setInterval(function(){
-    if(i < arr.length){
+    if (i < arr.length){
         if (arr[i].letter === "E") {
-            Kmom05.keydown(arr[i].key);
-            var element = getAllSelectedAndReturnOne();
-            testE(element);
+            console.log(allEls[0].classList);
+            Kmom05.keydown(arr[i].key)
+            .then(function() {
+
+                console.log(allEls[0].classList);
+
+                testE(document.getElementById("box1"));
+            })
+
         } else if (arr[i].letter === "Q") {
-            Kmom05.keydown(arr[i].key);
-            var element = getAllSelectedAndReturnOne();
-            testQ(element);
+            Kmom05.keydown(arr[i].key)
+            .then(function() {
+                var element = getAllSelectedAndReturnOne();
+                testQ(element);
+            });
+
         } else if (arr[i].letter === "W") {
             Kmom05.keydown(arr[i].key);
             var element = getAllSelectedAndReturnOne();
