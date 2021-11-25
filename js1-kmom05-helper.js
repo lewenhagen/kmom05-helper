@@ -1,8 +1,8 @@
 javascript:(function(){
-var i = 0, interval = 500, round = 1, corr = 0, faults = 0, allEls = document.getElementsByClassName("selected");
-var Kmom05 = {};
+let i = 0, interval = 500, round = 1, corr = 0, faults = 0, allEls = document.getElementsByClassName("box");
+let Kmom05 = {};
 Kmom05.keydown = async function(k) {
-    var myevent = new KeyboardEvent("keydown", {
+    let myevent = new KeyboardEvent("keydown", {
         'view': window,
         'key': k
     });
@@ -11,15 +11,13 @@ Kmom05.keydown = async function(k) {
 
 };
 
-var arr = [
+let arr = [
     {"todo": "Toggle Circle", "key": "e", "letter": "E"},
     {"todo": "Toggle Circle back", "key": "e", "letter": "E"},
     {"todo": "Increase size", "key": "q", "letter": "Q"},
     {"todo": "Decrease size", "key": "w", "letter": "W"},
     {"todo": "Toggle color", "key": "r", "letter": "R"},
-    {"todo": "New copy and increased Z-index", "key": "t", "letter": "T"},
-    {"todo": "Decreased Z-index", "key": "a", "letter": "A"},
-    {"todo": "Increased Z-index", "key": "s", "letter": "S"},
+    {"todo": "New copy", "key": "t", "letter": "T"},
     {"todo": "Delete selected", "key": "y", "letter": "Y"},
     {"todo": "Select all", "key": "i", "letter": "i"},
     {"todo": "Move left", "key": "ArrowLeft", "letter": "left"},
@@ -43,13 +41,13 @@ function setFail (c, info) {
 };
 
 function getAllSelectedAndReturnOne() {
-    var selAll = document.getElementsByClassName("box")[0];
+    let selAll = document.getElementsByClassName("selected")[0];
     return selAll;
 };
 
 function unselectAllButOne() {
-    var selAll = document.getElementsByClassName("selected");
-    for (var j = 0; j < selAll.length; j++) {
+    let selAll = document.getElementsByClassName("selected");
+    for (let j = 0; j < selAll.length; j++) {
         if (j > 0) {
             selAll[j].classList.remove("selected");
         }
@@ -61,9 +59,9 @@ function getAllSelected () {
 };
 
 function getAllDivs () {
-    var selAll = document.getElementsByTagName("div");
-    var ret = [];
-    for (var j = 0; j < selAll.length; j++) {
+    let selAll = document.getElementsByTagName("div");
+    let ret = [];
+    for (let j = 0; j < selAll.length; j++) {
         ret.push(selAll[j]);
     }
     return ret;
@@ -97,7 +95,7 @@ function testE (el) {
 };
 
 function testQ (el) {
-    var holderBefore, holderAfter;
+    let holderBefore, holderAfter;
     holderBefore = parseInt(el.offsetHeight);
     Kmom05.keydown("q");
     holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
@@ -110,7 +108,7 @@ function testQ (el) {
 };
 
 function testZ (el) {
-    var holderBefore, holderAfter;
+    let holderBefore, holderAfter;
     holderBefore = parseInt(el.offsetHeight);
     Kmom05.keydown("w");
     holderAfter = parseInt(getAllSelectedAndReturnOne().offsetHeight);
@@ -123,10 +121,10 @@ function testZ (el) {
 };
 
 function testR (el) {
-    var startColor = getStyle(el, "backgroundColor");
-    for (var j = 0; j < 3; j++) {
+    let startColor = getStyle(el, "backgroundColor");
+    for (let j = 0; j < 3; j++) {
         Kmom05.keydown("r");
-        var temp = getAllSelectedAndReturnOne();
+        let temp = getAllSelectedAndReturnOne();
         if (getStyle(temp, "backgroundColor") != startColor) {
             setOk("R", "Toggle color");
         } else {
@@ -138,47 +136,11 @@ function testR (el) {
 function testT (el) {
     Kmom05.keydown("t");
     Kmom05.keydown("t");
-    var temp = getAllSelected();
+    let temp = getAllSelected();
     if (getStyle(temp[temp.length-1], "zIndex") > getStyle(temp[0], "zIndex")) {
-        setOk("T", "New copy with increased Z-index");
+        setOk("T", "New copy");
     } else {
-        setFail("T", "New copy with increased Z-index");
-    }
-};
-
-function testA (el) {
-    var holderBefore = parseInt(getStyle(el, "zIndex"));
-    Kmom05.keydown("a");
-    Kmom05.keydown("a");
-    var holderAfter = parseInt(getStyle(el, "zIndex"));
-    console.log("before: " + holderBefore);
-    console.log("after: " + holderAfter);
-    var ok = false;
-    if (holderAfter < holderBefore) {
-        ok = true;
-    }
-    if (ok) {
-        setOk("A", "Decreased Z-index");
-    } else {
-        setFail("A", "Decreased Z-index");
-    }
-};
-
-function testS (el) {
-    var holderBefore = parseInt(getStyle(el, "zIndex"));
-    Kmom05.keydown("s");
-    Kmom05.keydown("s");
-    var holderAfter = parseInt(getStyle(el, "zIndex"));
-    console.log("before: " + holderBefore);
-    console.log("after: " + holderAfter);
-    var ok = false;
-    if (holderAfter > holderBefore) {
-        ok = true;
-    }
-    if (ok) {
-        setOk("S", "Increased Z-index");
-    } else {
-        setFail("S", "Increased Z-index");
+        setFail("T", "New copy");
     }
 };
 
@@ -191,8 +153,8 @@ function testY (el) {
 };
 
 function testI (el) {
-    var ok = true;
-    for (var j = 0; j < el.length; j++) {
+    let ok = true;
+    for (let j = 0; j < el.length; j++) {
         if (!el[j].classList.contains("selected")) {
             ok = false;
         }
@@ -205,10 +167,10 @@ function testI (el) {
 };
 
 function testArrows (el, letter, key) {
-    var before = getAllSelectedAndReturnOne().getBoundingClientRect();
+    let before = getAllSelectedAndReturnOne().getBoundingClientRect();
     Kmom05.keydown(key);
-    var after = getAllSelectedAndReturnOne().getBoundingClientRect();
-    var ok = false;
+    let after = getAllSelectedAndReturnOne().getBoundingClientRect();
+    let ok = false;
 
     if (letter === "left") {
         if (after.left < before.left) {
@@ -238,8 +200,8 @@ function testArrows (el, letter, key) {
 };
 
 function testU (el) {
-    var ok = true;
-    for (var j = 0; j < el.length; j++) {
+    let ok = true;
+    for (let j = 0; j < el.length; j++) {
         if (el[j].classList.contains("selected")) {
             ok = false;
         }
@@ -253,7 +215,7 @@ function testU (el) {
 
 function testP (el) {
     Kmom05.keydown("p");
-    var after = getAllDivs();
+    let after = getAllDivs();
     if (after.length > el.length) {
         setOk("P", "New random");
     } else {
@@ -262,15 +224,15 @@ function testP (el) {
 };
 
 function testDoubleClick () {
-    var el = document.querySelectorAll(".box");
-    var event = new MouseEvent('dblclick', {
+    let el = document.querySelectorAll(".box");
+    let event = new MouseEvent('dblclick', {
         'view': window,
         'bubbles': true,
         'cancelable': true
       });
     el[0].dispatchEvent(event);
     window.setTimeout(function(){
-        var newLength = document.querySelectorAll(".box").length;
+        let newLength = document.querySelectorAll(".box").length;
         if (newLength < el.length) {
             setOk("Double-click", "mouse event");
         } else {
@@ -279,58 +241,58 @@ function testDoubleClick () {
     }, 2500);
 };
 
-var timer = window.setInterval(function(){
+let timer = window.setInterval(function(){
     if (i < arr.length){
         if (arr[i].letter === "E") {
-            console.log(allEls[0].classList);
+            console.log("before: " + allEls[0].classList);
             Kmom05.keydown(arr[i].key)
             .then(function() {
 
-                console.log(allEls[0].classList);
-
                 testE(document.getElementById("box1"));
+                console.log("after: " + allEls[0].classList);
+
             })
 
         } else if (arr[i].letter === "Q") {
             Kmom05.keydown(arr[i].key)
             .then(function() {
-                var element = getAllSelectedAndReturnOne();
+                let element = getAllSelectedAndReturnOne();
                 testQ(element);
             });
 
         } else if (arr[i].letter === "W") {
             Kmom05.keydown(arr[i].key);
-            var element = getAllSelectedAndReturnOne();
+            let element = getAllSelectedAndReturnOne();
             testZ(element);
         } else if (arr[i].letter === "R") {
-            var element = getAllSelectedAndReturnOne();
+            let element = getAllSelectedAndReturnOne();
             testR(element);
         } else if (arr[i].letter === "T") {
-            var element = getAllSelectedAndReturnOne();
+            let element = getAllSelectedAndReturnOne();
             testT(element);
         } else if (arr[i].letter === "A") {
-            var element = getAllSelectedAndReturnOne();
+            let element = getAllSelectedAndReturnOne();
             testA(element);
         } else if (arr[i].letter === "S") {
-            var element = getAllSelectedAndReturnOne();
+            let element = getAllSelectedAndReturnOne();
             testS(element);
         } else if (arr[i].letter === "Y") {
             unselectAllButOne();
             Kmom05.keydown(arr[i].key);
-            var elements = getAllSelected();
+            let elements = getAllSelected();
             testY(elements);
         } else if (arr[i].letter === "i") {
             Kmom05.keydown(arr[i].key);
-            var elements = getAllSelected();
+            let elements = getAllSelected();
             testI(elements);
         } else if (arr[i].letter === "left" || arr[i].letter === "up" || arr[i].letter === "right" || arr[i].letter === "down") {
             testArrows(elements, arr[i].letter, arr[i].key);
         } else if (arr[i].letter === "U") {
             Kmom05.keydown(arr[i].key);
-            var elements = getAllSelected();
+            let elements = getAllSelected();
             testU(elements);
         } else if (arr[i].letter === "P") {
-            var elements = getAllDivs();
+            let elements = getAllDivs();
             testP(elements);
         } else if (arr[i].letter === "Double-click") {
             testDoubleClick();
